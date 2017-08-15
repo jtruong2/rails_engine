@@ -37,14 +37,14 @@ describe 'Customers API' do
   end
 
   it "can find a single object by date" do
-    date = create(:customer).created_at
+    example = create(:customer, created_at: "May 13 2003")
 
-    get "/api/v1/customers/find?created_at=#{date}"
+    get "/api/v1/customers/find?created_at=#{example.created_at}"
 
     customer = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(customer["date"]).to eq(date)
+    expect(customer["id"]).to eq(example.id)
   end
 
   it "can find all objects by name" do
