@@ -1,6 +1,12 @@
 class Api::V1::Merchants::SearchController < ApplicationController
   def show
-    render json: Merchant.find_by(safe_params)
+    if safe_params.keys[0] == "name"
+      render json: Merchant.find_by(safe_params)
+    else
+
+      a = Merchant.search_by_date(safe_params)
+      
+    end
   end
 
   private
