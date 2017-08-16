@@ -2,7 +2,7 @@ FactoryGirl.define do
   factory :invoice_item do
     item nil
     invoice nil
-    quantity 1
-    unit_price 1.5
+    sequence(:quantity) { |i| "#{i}"}
+    sequence(:unit_price) {|i| "#{i}"}
   end
 end
