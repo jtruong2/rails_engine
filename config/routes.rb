@@ -8,11 +8,12 @@ Rails.application.routes.draw do
         get '/random', to: 'random#show'
       end
       resources :customers, only: [:index, :show]
-      
+
       namespace :merchants do
         get '/find', to: 'search#show'
         get '/find_all', to: 'search#index'
         get '/random', to: 'random#show'
+        get '/most_revenue', to: 'analyst#index'
       end
       resources :merchants, only: [:index, :show]
 
