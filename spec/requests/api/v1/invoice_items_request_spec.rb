@@ -62,6 +62,21 @@ RSpec.describe "Invoice items API" do
     expect(invoice_items.count).to eq(2)
   end
 
+  it "finds all instances of invoice items by invoice_id" do
+    customer = create(:customer)
+    merchant = create(:merchant)
+    item = create(:item, merchant_id: merchant.id)
+    invoice = create(:invoice, customer_id: customer.id, merchant_id: merchant.id)
+    inv_item1, inv_item2 = create_list(:invoice_item, 2, item_id: item.id, invoice_id: invoice.id)
+
+    get "/api/v1/invoice_items/find_all?invoice_id=#{invoice.id}"
+
+    invoice_items = JSON.parse(response.body)
+
+    expect(response).to be_success
+    expect(invoice_items.count).to eq(2)
+  end
+
   it "returns a random invoice item" do
     customer = create(:customer)
     merchant = create(:merchant)
