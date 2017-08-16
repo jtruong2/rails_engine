@@ -1,7 +1,5 @@
 class Api::V1::TransactionsController < ApplicationController
   def index
-    if params
-      
     render json: Transaction.all
   end
 
