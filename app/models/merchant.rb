@@ -2,11 +2,28 @@ class Merchant < ApplicationRecord
   has_many :invoices
 
   def self.top_merchants_by_revenue(limit)
-    where("SELECT merchants, revenue FROM
-    (SELECT m.name AS merchants, sum(inv_item.unit_price * inv_item.quantity)
-    AS revenue FROM merchants m INNER JOIN items ON m.id = items.merchant_id
-    INNER JOIN invoice_items inv_item ON items.id = inv_item.item_id
-    GROUP BY m.id) AS merch_rev
-    ORDER BY revenue DESC LIMIT ?;", limit)
+    limit = limit.values[0].to_i
+    joins(:invoices => [:transactions, :invoice_items])
+    .where(transactions: {result: "success"})
+    .group(:id)
+    .order("sum(quantity * unit_price) DESC")
+    .limit(limit)
+  end
+
+  def self.top_merchants_by_total_number_of_items_sold(limit)
+    limit = limit.values[0].to_i
+    joins(:invoices => [:transactions, :invoice_items])
+    .where(transactions: {result: 'success'})
+    .group(:id)
+    .order("sum(quantity) DESC")
+    .limit(limit)
+  end
+
+  def self.total_revenue_by_date_across_all_merchants(date)
+    date = date.values[0]
+    joins(:invoices => [:transactions, :invoice_items])
+    .where(transactions: {result: 'success'})
+    .where(invoice_items: {created_at: (date + " 00:00:00"...date + " 23:59:59")})
+    .group(:id)
   end
 end
