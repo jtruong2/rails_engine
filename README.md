@@ -5,7 +5,9 @@ A Turing MOD 3 project on building a sales engine API using Rails, Active Record
 ## Installing / Getting started
 
 *git clone
+
 *bundle install
+
 *run 'rake import'
 
 ## Features
