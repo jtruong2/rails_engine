@@ -1,5 +1,6 @@
 class Merchant < ApplicationRecord
   has_many :invoices
+  has_many :items
 
   def self.top_merchants_by_revenue(limit)
     limit = limit.values[0].to_i
@@ -20,7 +21,7 @@ class Merchant < ApplicationRecord
   end
 
   def self.total_revenue_by_date_across_all_merchants(date)
-    # date = date.values[0]
+    date = date.values[0]
     joins(:invoices => [:transactions, :invoice_items])
     .where(transactions: {result: 'success'})
     .where(invoices: {created_at: date})
@@ -34,11 +35,15 @@ class Merchant < ApplicationRecord
     # WHERE invoices.created_at = '2012-03-16 11:55:05' GROUP BY invoices.created_at
   end
 
-  def self.merchant_total_revenue(id)
-    Merchant.joins(:invoices => [:transactions, :invoice_items])
+  def self.total_revenue(id)
+    revenue = Merchant.joins(:invoices => [:transactions, :invoice_items])
     .where("merchants.id = ?", id.to_i)
     .where(transactions: {result: 'success'})
-    .sum("(invoice_items.quantity * invoice_items.unit_price) AS total_revenue")
-
+    .sum("invoice_items.quantity * invoice_items.unit_price")
+    {:total_revenue => revenue}
   end
+
+  # def self.all_items_for_merchant(id)
+  #
+  # end
 end

@@ -78,4 +78,50 @@ RSpec.describe "Invoices API" do
     expect(response).to be_success
     expect(invoice.class).to_not eq(Array)
   end
+
+  it " returns a collection of associated transactions" do
+    customer = create(:customer)
+    merchant = create(:merchant)
+    invoice = create(:invoice, customer_id: customer.id, merchant_id: merchant.id)
+    create_list(:transaction, 3, invoice_id: invoice.id)
+
+    get "/api/v1/invoices/#{invoice.id}/transactions"
+
+    transactions = JSON.parse(response.body)
+
+    expect(response).to be_success
+    expect(transactions.count).to eq(3)
+  end
+
+  it "returns a collection of associated invoice items" do
+    customer = create(:customer)
+    merchant = create(:merchant)
+    item = create(:item, merchant_id: merchant.id)
+    invoice = create(:invoice, customer_id: customer.id, merchant_id: merchant.id)
+    create_list(:invoice_item, 3, invoice_id: invoice.id, item_id: item.id)
+
+    get "/api/v1/invoices/#{invoice.id}/invoice_items"
+
+    invoices = JSON.parse(response.body)
+
+    expect(response).to be_success
+    expect(invoices.count).to eq(3)
+  end
+
+  it "returns a collection of associated items" do
+    customer = create(:customer)
+    merchant = create(:merchant)
+    invoice = create(:invoice, merchant_id: merchant.id, customer_id: customer.id)
+    item1, item2, item3 = create_list(:item, 3, merchant_id: merchant.id)
+    create(:invoice_item, item_id: item1.id, invoice_id: invoice.id)
+    create(:invoice_item, item_id: item2.id, invoice_id: invoice.id)
+    create(:invoice_item, item_id: item3.id, invoice_id: invoice.id)
+
+    get "/api/v1/invoices/#{invoice.id}/items"
+
+    items = JSON.parse(response.body)
+
+    expect(response).to be_success
+    expect(items.count).to eq(3)
+  end
 end

@@ -17,16 +17,24 @@ Rails.application.routes.draw do
         get '/most_items', to: 'most_items#index'
         get '/revenue', to: 'revenue#index'
       end
+
       resources :merchants, only: [:index, :show] do
         get '/revenue', to: 'revenue#show'
+        get '/items', to: 'merchant_items#show'
+        get '/invoices', to: 'merchant_invoices#show'
       end
+
 
       namespace :invoices do
         get '/find', to: 'search#show'
         get '/find_all', to: 'search#index'
         get '/random', to: 'random#show'
       end
-      resources :invoices, only: [:index, :show]
+      resources :invoices, only: [:index, :show] do
+        get '/transactions', to: 'invoice_transactions#show'
+        get '/invoice_items', to: 'invoice_invoice_items#show'
+        get '/items', to: 'inv_items#show'
+      end
 
       namespace :transactions do
         get '/find', to: 'search#show'

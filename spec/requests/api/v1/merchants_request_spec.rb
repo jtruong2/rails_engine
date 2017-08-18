@@ -67,16 +67,28 @@ RSpec.describe "Merchants API" do
     expect(merchant.class).to_not be(Array)
   end
 
-  # it "returns top 5 merchants ranked by total revenue" do
-  #   create(:merchant)
-  #
-  #   get "/api/v1/merchants/most_revenue?quantity=5"
-  #
-  #   top_merchants = JSON.parse(response.body)
-  #
-  #   expect(response).to be_success
-  #   expect(top_merchants.count).to eq(5)
-  #   expect(top_merchants.first).to eq()
-  #   expect(top_merchants.last).to eq()
-  # end
+  it "returns a collection of items associated with that merchant" do
+    merchant = create(:merchant)
+    create_list(:item, 3, merchant_id: merchant.id)
+
+    get "/api/v1/merchants/#{merchant.id}/items"
+
+    items = JSON.parse(response.body)
+
+    expect(response).to be_success
+    expect(items.count).to eq(3)
+  end
+
+  it "returns a collection of invoices associated with that merchant from their known orders" do
+    merchant = create(:merchant)
+    customer = create(:customer)
+    create_list(:invoice, 3, merchant_id: merchant.id, customer_id: customer.id)
+
+    get "/api/v1/merchants/#{merchant.id}/invoices"
+
+    invoices = JSON.parse(response.body)
+
+    expect(response).to be_success
+    expect(invoices.count).to eq(3)
+  end
 end
