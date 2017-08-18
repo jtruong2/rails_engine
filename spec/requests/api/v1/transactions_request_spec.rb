@@ -46,7 +46,7 @@ RSpec.describe "Transactions API" do
     merchant = create(:merchant)
     customer = create(:customer)
     invoice = create(:invoice, merchant_id: merchant.id, customer_id: customer.id)
-    cc_num = create(:transaction, invoice_id: invoice.id).credit_card_number
+    cc_num = create(:transaction, invoice_id: invoice.id).credit_card_number.to_s
 
     get "/api/v1/transactions/find?credit_card_number=#{cc_num}"
 
