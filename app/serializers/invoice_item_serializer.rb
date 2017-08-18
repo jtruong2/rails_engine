@@ -1,3 +1,4 @@
 class InvoiceItemSerializer < ActiveModel::Serializer
-  attributes :id
+  attributes :id, :unit_price, :quantity
+
 end

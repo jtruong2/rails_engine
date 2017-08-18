@@ -84,4 +84,18 @@ RSpec.describe "Transactions API" do
     expect(response).to be_success
     expect(transaction.class).to_not eq(Array)
   end
+
+  it "returns the associated invoice" do
+    customer = create(:customer)
+    merchant = create(:merchant)
+    invoice = create(:invoice, customer_id: customer.id, merchant_id: merchant.id)
+    transaction = create(:transaction, invoice_id: invoice.id)
+
+    get "/api/v1/transactions/#{transaction.id}/invoice"
+
+    transaction_invoice = JSON.parse(response.body)
+
+    expect(response).to be_success
+    expect(transaction_invoice["id"]).to eq(invoice.id)
+  end
 end

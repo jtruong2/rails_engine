@@ -68,4 +68,31 @@ describe 'Customers API' do
     expect(response).to be_success
     expect(customer.class).to_not eq(Array)
   end
+
+  it "returns a collection of associated invoices" do
+    customer = create(:customer)
+    merchant = create(:merchant)
+    create_list(:invoice, 3, customer_id: customer.id, merchant_id: merchant.id)
+
+    get "/api/v1/customers/#{customer.id}/invoices"
+
+    invoices = JSON.parse(response.body)
+
+    expect(response).to be_success
+    expect(invoices.count).to eq(3)
+  end
+
+  it "returns a collection of associated transactions" do
+    customer = create(:customer)
+    merchant = create(:merchant)
+    invoice = create(:invoice, customer_id: customer.id, merchant_id: merchant.id)
+    create_list(:transaction, 3, invoice_id: invoice.id)
+
+    get "/api/v1/customers/#{customer.id}/transactions"
+
+    transactions = JSON.parse(response.body)
+    
+    expect(response).to be_success
+    expect(transactions.count).to eq(3)
+  end
 end

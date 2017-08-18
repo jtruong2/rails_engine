@@ -117,11 +117,38 @@ RSpec.describe "Invoices API" do
     create(:invoice_item, item_id: item2.id, invoice_id: invoice.id)
     create(:invoice_item, item_id: item3.id, invoice_id: invoice.id)
 
+
     get "/api/v1/invoices/#{invoice.id}/items"
 
     items = JSON.parse(response.body)
 
     expect(response).to be_success
     expect(items.count).to eq(3)
+  end
+
+  it "returns the associated customer" do
+    customer = create(:customer)
+    merchant = create(:merchant)
+    invoice = create(:invoice, merchant_id: merchant.id, customer_id: customer.id)
+
+    get "/api/v1/invoices/#{invoice.id}/customer"
+
+    customer_invoice = JSON.parse(response.body)
+
+    expect(response).to be_success
+    expect(customer_invoice["id"]).to eq(customer.id)
+  end
+
+  it "returns the associated merchant" do
+    customer = create(:customer)
+    merchant = create(:merchant)
+    invoice = create(:invoice, merchant_id: merchant.id, customer_id: customer.id)
+
+    get "/api/v1/invoices/#{invoice.id}/merchant"
+
+    merchant_invoice = JSON.parse(response.body)
+
+    expect(response).to be_success
+    expect(merchant_invoice["id"]).to eq(merchant.id)
   end
 end
