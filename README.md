@@ -15,4 +15,5 @@ This project uses RSpec to do request testing
 ## Credit
 
 Project Spec was designed by Turing School Software and Design
+
 Project was completed by student, Jimmy Truong
