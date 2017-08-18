@@ -1,24 +1,18 @@
-# README
+# Rails Engine
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+A Turing MOD 3 project on building a sales engine API using Rails, Active Record, and Postgresql.
 
-Things you may want to cover:
+## Installing / Getting started
 
-* Ruby version
+git clone
+bundle install
+run 'rake import'
 
-* System dependencies
+## Features
 
-* Configuration
+This project uses RSpec to do request testing
 
-* Database creation
+## Credit
 
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+Project Spec was designed by Turing School Software and Design
+Project was completed by student, Jimmy Truong
