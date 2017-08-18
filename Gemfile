@@ -12,6 +12,7 @@ gem 'pg', '~> 0.18'
 gem 'puma', '~> 3.7'
 gem 'rspec-rails'
 gem 'rake'
+gem 'active_model_serializers'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
