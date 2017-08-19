@@ -5,5 +5,12 @@ class Invoice < ApplicationRecord
   has_many :items, through: :invoice_items
   has_many :transactions
 
-
+  def self.best_day(id)
+    a = joins(:transactions, :invoice_items => [:item])
+    .where(transactions: {result: 'success'})
+    .where("items.id = ?", id)
+    .group("invoices.id")
+    .order("sum(invoice_items.quantity * invoice_items.unit_price) DESC")
+    .limit(1)
+  end
 end

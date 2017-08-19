@@ -2,7 +2,7 @@ class Merchant < ApplicationRecord
   has_many :invoices
   has_many :items
 
-  def self.top_merchants_by_revenue(limit)
+  def self.top_merchants_by_revenue(limit = nil)
     limit = limit.values[0].to_i
     joins(:invoices => [:transactions, :invoice_items])
     .where(transactions: {result: "success"})
@@ -11,8 +11,10 @@ class Merchant < ApplicationRecord
     .limit(limit)
   end
 
-  def self.top_merchants_by_total_number_of_items_sold(limit)
-    limit = limit.values[0].to_i
+  def self.top_merchants_by_total_number_of_items_sold(limit = nil)
+    if limit != nil
+      limit = limit.values[0].to_i
+    end
     joins(:invoices => [:transactions, :invoice_items])
     .where(transactions: {result: 'success'})
     .group(:id)

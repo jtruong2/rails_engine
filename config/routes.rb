@@ -61,11 +61,14 @@ Rails.application.routes.draw do
         get '/find', to: 'search#show'
         get '/find_all', to: 'search#index'
         get '/random', to: 'random#show'
+        get '/most_revenue', to: 'top_items#index'
+        get 'most_items', to: 'most_items#index'
       end
       scope module: 'items' do
         resources :items, only: [:index, :show] do
           get '/invoice_items', to: 'find_invoice_items#show'
           get '/merchant', to: 'find_merchant#show'
+          get '/best_day', to: 'best_day#show'
         end
       end
 
