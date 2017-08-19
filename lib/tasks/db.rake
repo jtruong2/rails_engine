@@ -46,7 +46,6 @@ namespace :app do
       csv = from_csv(Rails.root + "lib/data/items.csv")
       csv.each { |row| items << row.to_h}
       items.each { |item| Item.create!(item)}
-      seed_invoice_items
     end
 
     def seed_invoice_items
@@ -54,7 +53,6 @@ namespace :app do
       csv = from_csv(Rails.root + "lib/data/invoice_items.csv")
       csv.each { |row| invoice_items << row.to_h}
       invoice_items.each do |invoice_item|
-        invoice_item.delete_if { |k,v| k == :id}
         InvoiceItem.create!(invoice_item)
       end
     end
