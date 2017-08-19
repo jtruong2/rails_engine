@@ -15,4 +15,10 @@ class Customer < ApplicationRecord
     .count
     .first
   end
+
+  def self.customers_with_pending_invoices(id)
+    joins(:invoices => [:merchant, :transactions]).where("merchant_id = ?", id).where(transactions: {result: 'failed'}).group("customers.id")
+
+    #SELECT DISTINCT invoice_id FROM transactions WHERE result = 'success' AND invoice_id NOT IN ( SELECT invoice_id FROM transactions WHERE result != 'success');
+  end
 end

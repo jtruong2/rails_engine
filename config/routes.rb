@@ -29,6 +29,7 @@ Rails.application.routes.draw do
           get '/items', to: 'find_items#show'
           get '/invoices', to: 'find_invoices#show'
           get '/favorite_customer', to: 'favorite_customer#show'
+          get '/customers_with_pending_invoices', to: 'customer_pending_invoices#show'
         end
       end
 
