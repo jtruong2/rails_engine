@@ -10,6 +10,6 @@ class Api::V1::Merchants::SearchController < ApplicationController
   private
 
   def safe_params
-    params.permit(:name, :created_at, :updated_at)
+    params.permit(:name, :created_at, :updated_at, :id)
   end
 end
