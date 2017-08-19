@@ -23,27 +23,34 @@ class Merchant < ApplicationRecord
   def self.total_revenue_by_date_across_all_merchants(date)
     date = date.values[0]
     joins(:invoices => [:transactions, :invoice_items])
-    .where(transactions: {result: 'success'})
-    .where(invoices: {created_at: date})
+    .group("invoices.created_at")
+    .where("invoices.created_at = ?", date)
     .sum("invoice_items.quantity * invoice_items.unit_price")
-
-    # SELECT sum(invoice_items.quantity * invoice_items.unit_price)
-    # AS revenue, invoices.created_at FROM "merchants"
-    # INNER JOIN "invoices" ON "invoices"."merchant_id" = "merchants"."id"
-    # INNER JOIN "transactions" ON "transactions"."invoice_id" = "invoices"."id"
-    # INNER JOIN "invoice_items" ON "invoice_items"."invoice_id" = "invoices"."id"
-    # WHERE invoices.created_at = '2012-03-16 11:55:05' GROUP BY invoices.created_at
   end
 
-  def self.total_revenue(id)
-    revenue = Merchant.joins(:invoices => [:transactions, :invoice_items])
+  def self.total_revenue_for_single_merchant(id)
+    joins(:invoices => [:transactions, :invoice_items])
     .where("merchants.id = ?", id.to_i)
     .where(transactions: {result: 'success'})
     .sum("invoice_items.quantity * invoice_items.unit_price")
-    {:total_revenue => revenue}
   end
 
-  # def self.all_items_for_merchant(id)
-  #
-  # end
+  def self.total_revenue_for_merchant_for_specific_invoice_date(date, id)
+    date = date.values[0]
+    joins(:invoices => [:transactions, :invoice_items])
+    .where("merchants.id = ?", id.to_i)
+    .where(transactions: {result: 'success'})
+    .where("invoices.created_at = ?", date)
+    .sum("invoice_items.quantity * invoice_items.unit_price")
+  end
+
+  def self.favorite_customer(id)
+    joins(:invoices => [:customer, :transactions])
+    .where(transactions: {result: 'success'})
+    .where("merchant_id = ?", id)
+    .group("customer_id")
+    .order("count_all DESC")
+    .count
+    .first
+  end
 end

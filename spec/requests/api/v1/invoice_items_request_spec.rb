@@ -35,14 +35,15 @@ RSpec.describe "Invoice items API" do
     merchant = create(:merchant)
     item = create(:item, merchant_id: merchant.id)
     invoice = create(:invoice, customer_id: customer.id, merchant_id: merchant.id)
-    price = create(:invoice_item, item_id: item.id, invoice_id: invoice.id).unit_price
+    invoice_item = create(:invoice_item, item_id: item.id, invoice_id: invoice.id, unit_price: 12345)
+    price = (invoice_item.unit_price / 100)
 
     get "/api/v1/invoice_items/find?unit_price=#{price}"
 
-    invoice_item = JSON.parse(response.body)
+    invoice_item_with_price = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(invoice_item["unit_price"]).to eq(price)
+    expect(invoice_item_with_price["unit_price"]).to eq(price.to_s)
   end
 
   it "finds all invoice items by quantity" do

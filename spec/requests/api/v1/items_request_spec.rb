@@ -63,10 +63,10 @@ RSpec.describe "Items API" do
 
   it "finds all items by unit_price" do
     merchant = create(:merchant)
-    item1, item2 = create_list(:item, 2, merchant_id: merchant.id)
-    item3 = create(:item, unit_price: 100.0, merchant_id: merchant.id)
-
-    get "/api/v1/items/find_all?unit_price=#{item1.unit_price}"
+    item1, item2 = create_list(:item, 2, merchant_id: merchant.id, unit_price: 12345)
+    item3 = create(:item, unit_price: 10000, merchant_id: merchant.id)
+    price = (item1.unit_price / 100)
+    get "/api/v1/items/find_all?unit_price=#{price}"
 
     items = JSON.parse(response.body)
 

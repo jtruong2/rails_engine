@@ -4,7 +4,5 @@ class Customer < ApplicationRecord
   def self.return_associated_transactions(id)
     joins(:invoices => [:transactions])
     .where("customer.id = ?", id)
-    
-
   end
 end
