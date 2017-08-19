@@ -20,5 +20,6 @@ class Customer < ApplicationRecord
     joins(:invoices => [:merchant, :transactions]).where("merchant_id = ?", id).where(transactions: {result: 'failed'}).group("customers.id")
 
     #SELECT DISTINCT invoice_id FROM transactions WHERE result = 'success' AND invoice_id NOT IN ( SELECT invoice_id FROM transactions WHERE result != 'success');
+    #SELECT DISTINCT invoice_id FROM transactions WHERE result = 'failed' AND invoice_id NOT IN ( SELECT invoice_id FROM transactions WHERE result != 'failed');
   end
 end

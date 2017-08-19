@@ -6,10 +6,10 @@ RSpec.describe "Items API" do
 
     get "/api/v1/items"
 
-    items = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(items.count).to eq(3)
+    expect(output.count).to eq(3)
   end
 
   it "finds a single item by id" do
@@ -18,10 +18,10 @@ RSpec.describe "Items API" do
 
     get "/api/v1/items/#{id}"
 
-    item = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(item["id"]).to eq(id)
+    expect(output["id"]).to eq(id)
   end
 
   it "finds a single item by name" do
@@ -30,10 +30,10 @@ RSpec.describe "Items API" do
 
     get "/api/v1/items/find?name=#{name}"
 
-    item = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(item["name"]).to eq(name)
+    expect(output["name"]).to eq(name)
   end
 
   it "finds a single item by description" do
@@ -42,10 +42,10 @@ RSpec.describe "Items API" do
 
     get "/api/v1/items/find?description=#{description}"
 
-    item = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(item["description"]).to eq(description)
+    expect(output["description"]).to eq(description)
   end
 
   it "finds all items by name" do
@@ -55,10 +55,22 @@ RSpec.describe "Items API" do
 
     get "/api/v1/items/find_all?name=#{item1.name}"
 
-    items = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(items.count).to eq(2)
+    expect(output.count).to eq(2)
+  end
+
+  it "find single item by unit price" do
+    merchant = create(:merchant)
+    item = create(:item, merchant_id: merchant.id, unit_price: 12345)
+    price = (item.unit_price / 100).to_s
+    get "/api/v1/items/find?unit_price=#{price}"
+
+    output = JSON.parse(response.body)
+
+    expect(response).to be_success
+    expect(output["unit_price"]).to eq(price)
   end
 
   it "finds all items by unit_price" do
@@ -68,10 +80,10 @@ RSpec.describe "Items API" do
     price = (item1.unit_price / 100)
     get "/api/v1/items/find_all?unit_price=#{price}"
 
-    items = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(items.count).to eq(2)
+    expect(output.count).to eq(2)
   end
 
   it "returns a random item" do
@@ -80,10 +92,10 @@ RSpec.describe "Items API" do
 
     get "/api/v1/items/random"
 
-    item = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(item.class).to_not eq(Array)
+    expect(output.class).to_not eq(Array)
   end
 
   it "returns a collection of associated invoice items" do
@@ -95,10 +107,10 @@ RSpec.describe "Items API" do
 
     get "/api/v1/items/#{item.id}/invoice_items"
 
-    invoice_items = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(invoice_items.count).to eq(3)
+    expect(output.count).to eq(3)
   end
 
   it "returns the associated merchant" do
@@ -107,9 +119,26 @@ RSpec.describe "Items API" do
 
     get "/api/v1/items/#{item.id}/merchant"
 
-    merchant_item = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(merchant_item['id']).to eq(merchant.id)
+    expect(output['id']).to eq(merchant.id)
+  end
+
+  it "returns best day associated with one item" do
+    merchant = create(:merchant)
+    customer = create(:customer)
+    item = create(:item, merchant_id: merchant.id)
+    invoice_1 = create(:invoice, customer_id: customer.id, merchant_id: merchant.id, created_at:"2012-03-22T03:55:09.000Z")
+    invoice_2 = create(:invoice, customer_id: customer.id, merchant_id: merchant.id, created_at:"2012-03-20T23:57:05.000Z")
+    create(:invoice_item, item_id: item.id, invoice_id: invoice_1.id, unit_price: 3000, quantity: 10)
+    create(:invoice_item, item_id: item.id, invoice_id: invoice_2.id, unit_price: 3000, quantity: 2)
+
+    get "/api/v1/items/#{item.id}/best_day"
+
+    output = JSON.parse(response.body)
+
+    expect(response).to be_success
+    expect(output["best_day"]).to eq(invoice_1.created_at)
   end
 end

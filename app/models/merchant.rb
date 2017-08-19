@@ -32,15 +32,15 @@ class Merchant < ApplicationRecord
 
   def self.total_revenue_for_single_merchant(id)
     joins(:invoices => [:transactions, :invoice_items])
-    .where("merchants.id = ?", id.to_i)
+    .where("merchants.id = ?", id)
     .where(transactions: {result: 'success'})
     .sum("invoice_items.quantity * invoice_items.unit_price")
   end
 
   def self.total_revenue_for_merchant_for_specific_invoice_date(date, id)
-    date = date.values[0]
+    date = date.values[0][0..18]
     joins(:invoices => [:transactions, :invoice_items])
-    .where("merchants.id = ?", id.to_i)
+    .where("merchants.id = ?", id)
     .where(transactions: {result: 'success'})
     .where("invoices.created_at = ?", date)
     .sum("invoice_items.quantity * invoice_items.unit_price")

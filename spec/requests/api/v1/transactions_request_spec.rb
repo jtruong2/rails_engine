@@ -8,10 +8,10 @@ RSpec.describe "Transactions API" do
 
     get "/api/v1/transactions"
 
-    transactions = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(transactions.count).to eq(3)
+    expect(output.count).to eq(3)
   end
 
   it "can find transaction by id" do
@@ -22,10 +22,10 @@ RSpec.describe "Transactions API" do
 
     get "/api/v1/transactions/#{id}"
 
-    transaction = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(transaction["id"]).to eq(id)
+    expect(output["id"]).to eq(id)
   end
 
   it "can find a single transaction by result" do
@@ -36,10 +36,10 @@ RSpec.describe "Transactions API" do
 
     get "/api/v1/transactions/find?result=#{result}"
 
-    transaction = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(transaction["result"]).to eq(result)
+    expect(output["result"]).to eq(result)
   end
 
   it "can find a single transaction by credit_card_number" do
@@ -50,10 +50,10 @@ RSpec.describe "Transactions API" do
 
     get "/api/v1/transactions/find?credit_card_number=#{cc_num}"
 
-    transaction = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(transaction["credit_card_number"]).to eq(cc_num)
+    expect(output["credit_card_number"]).to eq(cc_num)
   end
 
   it "can find all transactions by result" do
@@ -65,10 +65,10 @@ RSpec.describe "Transactions API" do
 
     get "/api/v1/transactions/find_all?result=#{tr1.result}"
 
-    transactions = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(transactions.count).to eq(2)
+    expect(output.count).to eq(2)
   end
 
   it "returns a random transaction" do
@@ -79,10 +79,10 @@ RSpec.describe "Transactions API" do
 
     get "/api/v1/transactions/random"
 
-    transaction = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(transaction.class).to_not eq(Array)
+    expect(output.class).to_not eq(Array)
   end
 
   it "returns the associated invoice" do
@@ -93,9 +93,9 @@ RSpec.describe "Transactions API" do
 
     get "/api/v1/transactions/#{transaction.id}/invoice"
 
-    transaction_invoice = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(transaction_invoice["id"]).to eq(invoice.id)
+    expect(output["id"]).to eq(invoice.id)
   end
 end

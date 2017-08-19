@@ -7,10 +7,10 @@ RSpec.describe "Invoices API" do
 
     get "/api/v1/invoices"
 
-    invoices = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(invoices.count).to eq(3)
+    expect(output.count).to eq(3)
   end
 
   it "can get one invoice by id" do
@@ -20,10 +20,10 @@ RSpec.describe "Invoices API" do
 
     get "/api/v1/invoices/#{id}"
 
-    invoice = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(invoice["id"]).to eq(id)
+    expect(output["id"]).to eq(id)
   end
 
   it "can find single invoice by status" do
@@ -33,10 +33,10 @@ RSpec.describe "Invoices API" do
 
     get "/api/v1/invoices/find?status=#{status}"
 
-    invoice = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(invoice["status"]).to eq(status)
+    expect(output["status"]).to eq(status)
   end
 
   it "can find single invoice by date" do
@@ -46,10 +46,10 @@ RSpec.describe "Invoices API" do
 
     get "/api/v1/invoices/find?created_at=#{example.created_at}"
 
-    invoice = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(invoice["id"]).to eq(example.id)
+    expect(output["id"]).to eq(example.id)
   end
 
   it "can find all invoices by status" do
@@ -60,10 +60,10 @@ RSpec.describe "Invoices API" do
 
     get "/api/v1/invoices/find_all?status=#{invoice1.status}"
 
-    invoices = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(invoices.count).to eq(2)
+    expect(output.count).to eq(2)
   end
 
   it "returns a random invoice" do
@@ -73,10 +73,10 @@ RSpec.describe "Invoices API" do
 
     get "/api/v1/invoices/random"
 
-    invoice = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(invoice.class).to_not eq(Array)
+    expect(output.class).to_not eq(Array)
   end
 
   it " returns a collection of associated transactions" do
@@ -87,10 +87,10 @@ RSpec.describe "Invoices API" do
 
     get "/api/v1/invoices/#{invoice.id}/transactions"
 
-    transactions = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(transactions.count).to eq(3)
+    expect(output.count).to eq(3)
   end
 
   it "returns a collection of associated invoice items" do
@@ -102,10 +102,10 @@ RSpec.describe "Invoices API" do
 
     get "/api/v1/invoices/#{invoice.id}/invoice_items"
 
-    invoices = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(invoices.count).to eq(3)
+    expect(output.count).to eq(3)
   end
 
   it "returns a collection of associated items" do
@@ -120,10 +120,10 @@ RSpec.describe "Invoices API" do
 
     get "/api/v1/invoices/#{invoice.id}/items"
 
-    items = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(items.count).to eq(3)
+    expect(output.count).to eq(3)
   end
 
   it "returns the associated customer" do
@@ -133,10 +133,10 @@ RSpec.describe "Invoices API" do
 
     get "/api/v1/invoices/#{invoice.id}/customer"
 
-    customer_invoice = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(customer_invoice["id"]).to eq(customer.id)
+    expect(output["id"]).to eq(customer.id)
   end
 
   it "returns the associated merchant" do
@@ -146,9 +146,9 @@ RSpec.describe "Invoices API" do
 
     get "/api/v1/invoices/#{invoice.id}/merchant"
 
-    merchant_invoice = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(merchant_invoice["id"]).to eq(merchant.id)
+    expect(output["id"]).to eq(merchant.id)
   end
 end

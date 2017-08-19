@@ -8,9 +8,9 @@ describe 'Customers API' do
 
     expect(response).to be_success
 
-    customers = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
-    expect(customers.count).to eq(3)
+    expect(output.count).to eq(3)
   end
 
   it "can get one customer by it's id" do
@@ -18,10 +18,10 @@ describe 'Customers API' do
 
     get "/api/v1/customers/#{id}"
 
-    customer = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(customer["id"]).to eq(id)
+    expect(output["id"]).to eq(id)
   end
 
   it "can find a single object by name" do
@@ -29,11 +29,11 @@ describe 'Customers API' do
 
     get "/api/v1/customers/find?first_name=#{first_name}"
 
-    customer = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
 
     expect(response).to be_success
-    expect(customer["first_name"]).to eq(first_name)
+    expect(output["first_name"]).to eq(first_name)
   end
 
   it "can find a single object by date" do
@@ -41,10 +41,10 @@ describe 'Customers API' do
 
     get "/api/v1/customers/find?created_at=#{example.created_at}"
 
-    customer = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(customer["id"]).to eq(example.id)
+    expect(output["id"]).to eq(example.id)
   end
 
   it "can find all objects by name" do
@@ -52,10 +52,10 @@ describe 'Customers API' do
 
     get "/api/v1/customers/find_all?first_name=#{person1.first_name}"
 
-    customers = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(customers.count).to eq(2)
+    expect(output.count).to eq(2)
   end
 
   it "returns a random resource" do
@@ -66,7 +66,7 @@ describe 'Customers API' do
     customer = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(customer.class).to_not eq(Array)
+    expect(output.class).to_not eq(Array)
   end
 
   it "returns a collection of associated invoices" do
@@ -76,10 +76,10 @@ describe 'Customers API' do
 
     get "/api/v1/customers/#{customer.id}/invoices"
 
-    invoices = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(invoices.count).to eq(3)
+    expect(output.count).to eq(3)
   end
 
   it "returns a collection of associated transactions" do
@@ -90,9 +90,26 @@ describe 'Customers API' do
 
     get "/api/v1/customers/#{customer.id}/transactions"
 
-    transactions = JSON.parse(response.body)
-    
+    output = JSON.parse(response.body)
+
     expect(response).to be_success
-    expect(transactions.count).to eq(3)
+    expect(output.count).to eq(3)
+  end
+
+  it "returns favorite merchant" do
+    customer = create(:customer)
+    merchant_1 = create(:merchant)
+    merchant_2 = create(:merchant)
+    invoice_1, invoice_2 = create_list(:invoice, 2, merchant_id: merchant_1.id, customer_id: customer.id)
+    invoice_3 = create(:invoice, merchant_id: merchant_2.id, customer_id: customer.id)
+    create(:transaction, invoice_id: invoice_1.id)
+    create(:transaction, invoice_id: invoice_2.id)
+    create(:transaction, invoice_id: invoice_3.id)
+
+    get "/api/v1/customers/#{customer.id}/favorite_merchant"
+
+    output = JSON.parse(response.body)
+    expect(response).to be_success
+    expect(output["id"]).to eq(merchant_1.id)
   end
 end

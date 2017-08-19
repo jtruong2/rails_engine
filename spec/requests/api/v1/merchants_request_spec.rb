@@ -5,10 +5,10 @@ RSpec.describe "Merchants API" do
 
     get "/api/v1/merchants"
 
-    merchants = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(merchants.count).to eq(3)
+    expect(output.count).to eq(3)
   end
 
   it "can get one merchant by id" do
@@ -16,10 +16,10 @@ RSpec.describe "Merchants API" do
 
     get "/api/v1/merchants/#{id}"
 
-    merchant = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(merchant["id"]).to eq(id)
+    expect(output["id"]).to eq(id)
   end
 
   it "can find single merchant by name" do
@@ -27,10 +27,10 @@ RSpec.describe "Merchants API" do
 
     get "/api/v1/merchants/find?name=#{name}"
 
-    merchant = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(merchant["name"]).to eq(name)
+    expect(output["name"]).to eq(name)
   end
 
   it "can find single merchant by date" do
@@ -38,10 +38,10 @@ RSpec.describe "Merchants API" do
 
     get "/api/v1/merchants/find?created_at=#{example.created_at}"
 
-    merchant = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(merchant["id"]).to eq(example.id)
+    expect(output["id"]).to eq(example.id)
   end
 
   it "can find all merchants by name" do
@@ -50,10 +50,10 @@ RSpec.describe "Merchants API" do
 
     get "/api/v1/merchants/find_all?name=#{company1.name}"
 
-    companies = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(companies.count).to eq(2)
+    expect(output.count).to eq(2)
   end
 
   it "can return a random merchant" do
@@ -61,10 +61,10 @@ RSpec.describe "Merchants API" do
 
     get "/api/v1/merchants/random"
 
-    merchant = JSON.parse(response.body)
+    output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(merchant.class).to_not be(Array)
+    expect(output.class).to_not be(Array)
   end
 
   it "returns a collection of items associated with that merchant" do
@@ -90,5 +90,37 @@ RSpec.describe "Merchants API" do
 
     expect(response).to be_success
     expect(invoices.count).to eq(3)
+  end
+
+  it "total revenue for merchant for specific invoice date" do
+    merchant = create(:merchant)
+    customer = create(:customer)
+    item = create(:item, merchant_id: merchant.id)
+    invoice = create(:invoice, customer_id: customer.id, merchant_id: merchant.id, created_at: "2012-03-16 11:55:05")
+    transaction = create(:transaction, invoice_id: invoice.id, result: "success")
+    create(:invoice_item, invoice_id: invoice.id, unit_price: 1000, quantity: 2, item_id: item.id)
+
+    get "/api/v1/merchants/#{merchant.id}/revenue?date=#{invoice.created_at}"
+
+    output = JSON.parse(response.body)
+
+    expect(response).to be_success
+    expect(output["revenue"]).to eq("20.0")
+  end
+
+  it "returns total revenue for a single merchant" do
+    merchant = create(:merchant)
+    customer = create(:customer)
+    invoice = create(:invoice, customer_id: customer.id, merchant_id: merchant.id)
+    transaction = create(:transaction, invoice_id: invoice.id)
+    item = create(:item, merchant_id: merchant.id)
+    create_list(:invoice_item, 3, unit_price: 1000, quantity: 2, invoice_id: invoice.id, item_id: item.id)
+
+    get "/api/v1/merchants/#{merchant.id}/revenue"
+
+    output = JSON.parse(response.body)
+
+    expect(response).to be_success
+    expect(output["revenue"]).to eq("60.0")
   end
 end

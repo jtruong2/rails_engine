@@ -6,7 +6,7 @@ class Invoice < ApplicationRecord
   has_many :transactions
 
   def self.best_day(id)
-    a = joins(:transactions, :invoice_items => [:item])
+    joins(:transactions, :invoice_items => [:item])
     .where(transactions: {result: 'success'})
     .where("items.id = ?", id)
     .group("invoices.id")
