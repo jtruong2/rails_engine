@@ -1,6 +1,6 @@
 # Rails Engine
 
-A Turing MOD 3 project on building a sales engine API using Rails, Active Record, and Postgresql.
+A Turing Module 3 project on building a sales engine API using Rails, Active Record, and Postgresql.
 
 ## Installing / Getting started
 

@@ -5,7 +5,7 @@ class Merchant < ApplicationRecord
   def self.top_merchants_by_revenue(limit = nil)
     limit = limit.values[0].to_i
     joins(:invoices => [:transactions, :invoice_items])
-    .where(transactions: {result: "success"})
+    .merge(Transaction.successful_transactions)
     .group(:id)
     .order("sum(quantity * unit_price) DESC")
     .limit(limit)
@@ -16,7 +16,7 @@ class Merchant < ApplicationRecord
       limit = limit.values[0].to_i
     end
     joins(:invoices => [:transactions, :invoice_items])
-    .where(transactions: {result: 'success'})
+    .merge(Transaction.successful_transactions)
     .group(:id)
     .order("sum(quantity) DESC")
     .limit(limit)
@@ -25,6 +25,7 @@ class Merchant < ApplicationRecord
   def self.total_revenue_by_date_across_all_merchants(date)
     date = date.values[0]
     joins(:invoices => [:transactions, :invoice_items])
+    .merge(Transaction.successful_transactions)
     .group("invoices.created_at")
     .where("invoices.created_at = ?", date)
     .sum("invoice_items.quantity * invoice_items.unit_price")
@@ -32,6 +33,7 @@ class Merchant < ApplicationRecord
 
   def self.total_revenue_for_single_merchant(id)
     joins(:invoices => [:transactions, :invoice_items])
+    .merge(Transaction.successful_transactions)
     .where("merchants.id = ?", id)
     .where(transactions: {result: 'success'})
     .sum("invoice_items.quantity * invoice_items.unit_price")
@@ -40,15 +42,15 @@ class Merchant < ApplicationRecord
   def self.total_revenue_for_merchant_for_specific_invoice_date(date, id)
     date = date.values[0][0..18]
     joins(:invoices => [:transactions, :invoice_items])
+    .merge(Transaction.successful_transactions)
     .where("merchants.id = ?", id)
-    .where(transactions: {result: 'success'})
     .where("invoices.created_at = ?", date)
     .sum("invoice_items.quantity * invoice_items.unit_price")
   end
 
   def self.favorite_customer(id)
     joins(:invoices => [:customer, :transactions])
-    .where(transactions: {result: 'success'})
+    .merge(Transaction.successful_transactions)
     .where("merchant_id = ?", id)
     .group("customer_id")
     .order("count_all DESC")

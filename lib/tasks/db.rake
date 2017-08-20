@@ -1,10 +1,13 @@
 require 'csv'
+require 'gemoji'
+
 namespace :app do
   desc 'import data to database from csv'
   task :import => :environment do
-    puts "Populating database with goodies"
 
     Rake::Task['db:reset'].invoke
+
+    puts "#{Emoji.find_by_alias("rage").raw} Database is hungrrry"
 
     def from_csv(file_path)
       values = []
@@ -57,22 +60,24 @@ namespace :app do
       end
     end
 
-    puts "seeding customers"
+    puts "#{Emoji.find_by_alias("pizza").raw} Feeding customers"
     seed_customers
 
-    puts "seeding merchants"
+    puts "#{Emoji.find_by_alias("fries").raw} Feeding merchants"
     seed_merchants
 
-    puts "seeding invoices"
+    puts "#{Emoji.find_by_alias("hamburger").raw} Feeding invoices"
     seed_invoices
 
-    puts "seeding transactions"
+    puts "#{Emoji.find_by_alias("spaghetti").raw} Feeding transactions"
     seed_transactions
 
-    puts "seeding items"
+    puts "#{Emoji.find_by_alias("sushi").raw} Feeding items"
     seed_items
 
-    puts "seeding invoice_items"
+    puts "#{Emoji.find_by_alias("ramen").raw} Feeding invoice_items"
     seed_invoice_items
+
+    puts "#{Emoji.find_by_alias("smile").raw} Database is full and happy"
   end
 end

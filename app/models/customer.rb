@@ -3,12 +3,12 @@ class Customer < ApplicationRecord
 
   def self.favorite_merchant(id)
     joins(:invoices => [:merchant, :transactions])
-    .where(transactions: {result: 'success'})
+    .merge(Transaction.successful_transactions)
     .where("customers.id = ?", id)
     .group("merchant_id")
     .order("count_all DESC")
     .count
-    .first
+    .first[0]
   end
 
   def self.customers_with_pending_invoices(id)

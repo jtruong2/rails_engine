@@ -7,7 +7,7 @@ class Invoice < ApplicationRecord
 
   def self.best_day(id)
     joins(:transactions, :invoice_items => [:item])
-    .where(transactions: {result: 'success'})
+    .merge(Transaction.successful_transactions)
     .where("items.id = ?", id)
     .group("invoices.id")
     .order("sum(invoice_items.quantity * invoice_items.unit_price) DESC")

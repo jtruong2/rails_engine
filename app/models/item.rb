@@ -15,7 +15,7 @@ class Item < ApplicationRecord
 
   def self.top_items_based_on_revenue(limit = nil)
     joins(:invoice_items => [:invoice => [:transactions]])
-    .where(transactions: {result: 'success'})
+    .merge(Transaction.successful_transactions)
     .group("items.id")
     .order("sum(invoice_items.quantity * invoice_items.unit_price) DESC")
     .limit(limit.values[0])
