@@ -125,20 +125,38 @@ RSpec.describe "Items API" do
     expect(output['id']).to eq(merchant.id)
   end
 
-  it "returns best day associated with one item" do
-    merchant = create(:merchant)
+  it "returns most sold item" do
     customer = create(:customer)
-    item = create(:item, merchant_id: merchant.id)
-    invoice_1 = create(:invoice, customer_id: customer.id, merchant_id: merchant.id, created_at:"2012-03-22T03:55:09.000Z")
-    invoice_2 = create(:invoice, customer_id: customer.id, merchant_id: merchant.id, created_at:"2012-03-20T23:57:05.000Z")
-    create(:invoice_item, item_id: item.id, invoice_id: invoice_1.id, unit_price: 3000, quantity: 10)
-    create(:invoice_item, item_id: item.id, invoice_id: invoice_2.id, unit_price: 3000, quantity: 2)
+    merchant = create(:merchant)
+    item_1 = create(:item, merchant_id: merchant.id)
+    item_2 = create(:item, merchant_id: merchant.id)
+    invoice_1 = create(:invoice, merchant_id: merchant.id, customer_id: customer.id)
+    invoice_2 = create(:invoice, merchant_id: merchant.id, customer_id: customer.id)
+    create(:invoice_item, invoice_id: invoice_1.id, item_id: item_1.id)
+    create_list(:invoice_item, 2, invoice_id: invoice_2.id, item_id: item_2.id)
 
-    get "/api/v1/items/#{item.id}/best_day"
+    get "/api/v1/items/most_items?quantity=1"
 
     output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(output["best_day"]).to eq(invoice_1.created_at)
+    expect(output).to eq(item_2.id)
   end
+
+  # it "returns best day associated with one item" do
+  #   merchant = create(:merchant)
+  #   customer = create(:customer)
+  #   item = create(:item, merchant_id: merchant.id)
+  #   invoice_1 = create(:invoice, customer_id: customer.id, merchant_id: merchant.id)
+  #   invoice_2 = create(:invoice, customer_id: customer.id, merchant_id: merchant.id)
+  #   create(:invoice_item, item_id: item.id, invoice_id: invoice_1.id, unit_price: 3000, quantity: 10)
+  #   create(:invoice_item, item_id: item.id, invoice_id: invoice_2.id, unit_price: 3000, quantity: 2)
+  #
+  #   get "/api/v1/items/#{item.id}/best_day"
+  #
+  #   output = JSON.parse(response.body)
+  #
+  #   expect(response).to be_success
+  #   expect(output["best_day"]).to eq(invoice_1.created_at)
+  # end
 end
