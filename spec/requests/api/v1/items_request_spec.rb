@@ -125,6 +125,26 @@ RSpec.describe "Items API" do
     expect(output['id']).to eq(merchant.id)
   end
 
+  it "returns top items based on revenue" do
+    customer = create(:customer)
+    merchant = create(:merchant)
+    item_1 = create(:item, merchant_id: merchant.id)
+    item_2 = create(:item, merchant_id: merchant.id)
+    invoice_1 = create(:invoice, merchant_id: merchant.id, customer_id: customer.id)
+    invoice_2 = create(:invoice, merchant_id: merchant.id, customer_id: customer.id)
+    transaction_1 = create(:transaction, invoice_id: invoice_1.id)
+    transaction_2 = create(:transaction, invoice_id: invoice_2.id)
+    create(:invoice_item, invoice_id: invoice_1.id, item_id: item_1.id, unit_price: 10000, quantity: 10)
+    create(:invoice_item, invoice_id: invoice_2.id, item_id: item_2.id, unit_price: 10000, quantity: 5)
+
+    get "/api/v1/items/most_revenue"
+
+    output = JSON.parse(response.body)
+
+    expect(response).to be_success
+    expect(output.first["id"]).to eq(item_1.id)
+  end
+
   it "returns most sold item" do
     customer = create(:customer)
     merchant = create(:merchant)
@@ -132,6 +152,8 @@ RSpec.describe "Items API" do
     item_2 = create(:item, merchant_id: merchant.id)
     invoice_1 = create(:invoice, merchant_id: merchant.id, customer_id: customer.id)
     invoice_2 = create(:invoice, merchant_id: merchant.id, customer_id: customer.id)
+    transaction_1 = create(:transaction, invoice_id: invoice_1.id)
+    transaction_2 = create(:transaction, invoice_id: invoice_2.id)
     create(:invoice_item, invoice_id: invoice_1.id, item_id: item_1.id)
     create_list(:invoice_item, 2, invoice_id: invoice_2.id, item_id: item_2.id)
 
@@ -140,23 +162,25 @@ RSpec.describe "Items API" do
     output = JSON.parse(response.body)
 
     expect(response).to be_success
-    expect(output).to eq(item_2.id)
+    expect(output.first["id"]).to eq(item_2.id)
   end
 
-  # it "returns best day associated with one item" do
-  #   merchant = create(:merchant)
-  #   customer = create(:customer)
-  #   item = create(:item, merchant_id: merchant.id)
-  #   invoice_1 = create(:invoice, customer_id: customer.id, merchant_id: merchant.id)
-  #   invoice_2 = create(:invoice, customer_id: customer.id, merchant_id: merchant.id)
-  #   create(:invoice_item, item_id: item.id, invoice_id: invoice_1.id, unit_price: 3000, quantity: 10)
-  #   create(:invoice_item, item_id: item.id, invoice_id: invoice_2.id, unit_price: 3000, quantity: 2)
-  #
-  #   get "/api/v1/items/#{item.id}/best_day"
-  #
-  #   output = JSON.parse(response.body)
-  #
-  #   expect(response).to be_success
-  #   expect(output["best_day"]).to eq(invoice_1.created_at)
-  # end
+  it "returns best day associated with one item" do
+    merchant = create(:merchant)
+    customer = create(:customer)
+    item = create(:item, merchant_id: merchant.id)
+    invoice_1 = create(:invoice, customer_id: customer.id, merchant_id: merchant.id, created_at: "2017-08-20T04:33:06.128Z")
+    invoice_2 = create(:invoice, customer_id: customer.id, merchant_id: merchant.id, created_at: "2015-09-20T04:33:06.128Z")
+    transaction_1 = create(:transaction, invoice_id: invoice_1.id)
+    transaction_1 = create(:transaction, invoice_id: invoice_2.id)
+    create(:invoice_item, item_id: item.id, invoice_id: invoice_1.id, unit_price: 3000, quantity: 10)
+    create(:invoice_item, item_id: item.id, invoice_id: invoice_2.id, unit_price: 3000, quantity: 2)
+
+    get "/api/v1/items/#{item.id}/best_day"
+
+    output = JSON.parse(response.body)
+
+    expect(response).to be_success
+    expect(output["best_day"]).to eq("2017-08-20T04:33:06.128Z")
+  end
 end

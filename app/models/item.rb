@@ -21,7 +21,7 @@ class Item < ApplicationRecord
     .limit(limit.values[0])
   end
 
-  def self.most_sold_item(limit)
+  def self.most_sold_item(limit = nil)
     joins(:invoice_items => [:invoice => [:transactions]])
     .where(transactions: {result: 'success'})
     .group("items.id")
