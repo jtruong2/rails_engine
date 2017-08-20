@@ -14,6 +14,8 @@ A Turing Module 3 project on building a sales engine API using Rails, Active Rec
 
 This project uses RSpec to do request testing
 
+SimpleCov used to show test coverage
+
 ## Credit
 
 Project Spec was designed by Turing School Software and Design
