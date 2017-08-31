@@ -69,6 +69,8 @@ GET /api/v1/customers/:id/favorite_merchant returns a merchant where the custome
 
 This project uses RSpec to do request testing
 
+SimpleCov used to show test coverage
+
 ## Credit
 
 Project Spec was designed by Turing School Software and Design
