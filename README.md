@@ -73,7 +73,7 @@ This project uses RSpec to do request testing
 
 SimpleCov used to show test coverage (100% Covered)
 
-![test coverage](test coverage.png)
+![test coverage](test_coverage.png?raw=true)
 
 ## Credit
 
