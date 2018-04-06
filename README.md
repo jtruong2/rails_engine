@@ -4,11 +4,13 @@ A Turing Module 3 project on building a sales engine API using Rails, Active Rec
 
 ## Installing / Getting started
 
-*git clone
+1. ```git clone: git@github.com:jtruong2/rails_engine.git```
 
-*bundle install
+1. ```bundle install```
 
-*run 'rake app:import'
+1. ```rake app:import```
+
+1. ```rspec``` to run test suite
 
 
 ## Endpoints
@@ -70,6 +72,8 @@ GET /api/v1/customers/:id/favorite_merchant returns a merchant where the custome
 This project uses RSpec to do request testing
 
 SimpleCov used to show test coverage
+
+![test coverage](test coverage.png)
 
 ## Credit
 
